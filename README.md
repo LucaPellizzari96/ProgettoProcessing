@@ -4,7 +4,7 @@ Partendo dall'esempio minim/examples/Basics/AnalyseSound che mostra una FFT per 
 
 ## Note:
 
-* Origine in (0,0) (in alto a destra sullo schermo)
+* Origine in (0,0) (in alto a sinistra sullo schermo)
 * X positivo verso destra
 * Y positivo verso il basso
 * "camera" guarda verso -Z
