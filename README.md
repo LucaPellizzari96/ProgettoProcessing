@@ -3,17 +3,11 @@
 Partendo dall'esempio minim/examples/Basics/AnalyseSound che mostra una FFT per analizzare un audio generato da un AudioPlayer
 
 ## Note:
-	   -> -Z
-	  -
-	 -
-	-
-(0,0)----------> +X
-	'
-	'
-	'
-	'
-	'
-	+Y
+
+* Origine in (0,0) (in alto a destra sullo schermo)
+* X positivo verso destra
+* Y positivo verso il basso
+* "camera" guarda verso -Z
 
 ## Fatto:
 
