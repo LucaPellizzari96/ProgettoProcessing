@@ -18,14 +18,22 @@ import ddf.minim.*;
 Minim minim;
 AudioPlayer song;
 FFT fft;
+// personaggio e ostacoli
 Character character = new Character();  // costruttore del personaggio
-int numObstacles = 50; // numero di ostacoli
+int numObstacles = 15; // numero di ostacoli
 ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>(); // array che contiene gli ostacoli
+Spectrum2 spettri = new Spectrum2();
+// costruzione ellisse
+float a = 2; // dimensioni dell'ellisse (orizzontale); dimensione verticale b = 1 => non serve scriverla
+float incrementoAngolo = 360.0/512.0; // incremento dell'angolo = numero di gradi/numero di campioni
+float angolo = 0; // angolo per lo spettro attorno alla circonferenza (mappata in un'ellisse)
+// variabili per lo spostamento su z
+float zMin = 0.05;
+float zMax = 2.45;
 
 void setup()
 {
   fullScreen(P3D);
-  //size(512, 512, P3D);
   
   minim = new Minim(this);
   
@@ -49,23 +57,21 @@ void setup()
    obstacles.add(obstacle);
   }
   
-}
+} // void setup()
 
-// Gestisco il movimento del personaggio tramite i tasti freccia
+// Gestisco il movimento del personaggio
 void keyPressed(){
   switch(keyCode){ // keyCode : variabile speciale per riconoscere alcuni caratteri particolari
     case UP:
-      character.moveUp();
+      character.animate();
       break;
     case DOWN:
-      character.moveDown();
+      character.invertAngle();
       break;
-    case LEFT:
-      character.moveLeft();
+    case ENTER:
+      character.gameOver = false;
+      character.animation = true;
       break;
-    case RIGHT:
-      character.moveRight();
-      break;   
     default:
       break;
   }
@@ -75,40 +81,44 @@ void draw()
 {
   background(0);
   
-  stroke(255,0,0); // rosso
-  line(0, 0, width, 0); // asse x
-  stroke(0,255,0); // verde  
-  line(0, 0, 0, height); // asse y
-  
   // perform a forward FFT on the samples in song's mix buffer,
   // which contains the mix of both the left and right channels of the file
   fft.forward( song.mix );
   
-  /*
-  for(int i = 0; i < fft.specSize(); i++)
-  {
-    // draw the line for frequency band i, scaling it up a bit so we can see it
-    line( i, height, i, height - fft.getBand(i)*8 ); // spettro "lineare" di prova solo per vedere che sia corretto
-    
-  }
-  */
+  float xDestraCharacter = character.getX() + character.raggio;
+  float xSinistraCharacter = character.getX() - character.raggio;
+  float yAltoCharacter = character.getY() + character.raggio;
+  float yBassoCharacter = character.getY() - character.raggio;
+  for(int i=0; i < numObstacles; i++){
+    float xDestraOst = obstacles.get(i).getX() + obstacles.get(i).dim;
+    float xSinistraOst = obstacles.get(i).getX() - obstacles.get(i).dim;
+    float yAltoOst = obstacles.get(i).getY() + obstacles.get(i).dim;
+    float yBassoOst = obstacles.get(i).getY() - obstacles.get(i).dim;
+    float zPosOst = obstacles.get(i).getZ() + obstacles.get(i).dim;
+    float zNegOst = obstacles.get(i).getZ() - obstacles.get(i).dim;
+    if((xDestraOst > xSinistraCharacter && xDestraOst < xDestraCharacter) || (xSinistraOst > xSinistraCharacter && xSinistraOst < xDestraCharacter)){  // collisione su x
+      if((yBassoOst > yAltoCharacter && yBassoOst < yBassoCharacter) || (yAltoOst > yBassoCharacter && yAltoOst < yAltoCharacter)){ // collisione su y
+        if(character.getZ() < zPosOst && character.getZ() > zNegOst){
+        character.gameOver = true;
+        }
+      }
+    }
+  } // for
   
   // Traslo per fare in modo che la scena sia al centro dello schermo
   translate(width/2, height/2, 0);
   
+  stroke(255,0,0); // rosso
   character.display(); // grazie alla traslazione viene posizionato al centro (inizialmente)
   
   // Mostro gli ostacoli
-  for(int i = 0; i < numObstacles; i++){
-   stroke(0,0,255);
+  stroke(0,255,0); // verde
+  for(int i = 0; i < numObstacles; i++){  
    obstacles.get(i).display();
   }
   
-  for(int i = 0; i < fft.specSize(); i++){ // disegno lo spettro in forma circolare
-    float raggio = map(fft.getBand(i), 0, 1, 200, 300);
-    // moltiplico il raggio per allontanare la scena dal centro dello schermo
-    line( 1.5*raggio*cos(radians(i)), 1.5*raggio*sin(radians(i)), 1.6*raggio*cos(radians(i)), 1.6*raggio*sin(radians(i)) );
-    //line( 0, 0, 2*raggio*cos(radians(i)), 2*raggio*sin(radians(i)) );    
-  }
-
-}
+  stroke(0,0,255);  // blu
+  
+  spettri.display();
+    
+}  // void draw()
