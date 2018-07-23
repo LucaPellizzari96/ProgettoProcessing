@@ -20,16 +20,16 @@ AudioPlayer song;
 FFT fft;
 // personaggio e ostacoli
 Character character = new Character();  // costruttore del personaggio
-int numObstacles = 15; // numero di ostacoli
+int numObstacles = 3; // numero di ostacoli "buoni"
 ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>(); // array che contiene gli ostacoli
-Spectrum2 spettri = new Spectrum2();
+int numEnemies = 3; // numero di ostacoli "dannosi"
+ArrayList<Obstacle> enemies = new ArrayList<Obstacle>(); // array che contiene gli ostacoli
+EllipticSpectrum ellipse = new EllipticSpectrum();
+//SphereSpectrum sphere = new SphereSpectrum();
 // costruzione ellisse
 float a = 2; // dimensioni dell'ellisse (orizzontale); dimensione verticale b = 1 => non serve scriverla
 float incrementoAngolo = 360.0/512.0; // incremento dell'angolo = numero di gradi/numero di campioni
 float angolo = 0; // angolo per lo spettro attorno alla circonferenza (mappata in un'ellisse)
-// variabili per lo spostamento su z
-float zMin = 0.05;
-float zMax = 2.45;
 
 void setup()
 {
@@ -55,6 +55,12 @@ void setup()
   for(int i = 0; i < numObstacles; i++){
    Obstacle obstacle = new Obstacle();
    obstacles.add(obstacle);
+  }
+  
+  // Inserisco gli ostacoli nell'arraylist
+  for(int i = 0; i < numEnemies; i++){
+   Obstacle enemie = new Obstacle();
+   enemies.add(enemie);
   }
   
 } // void setup()
@@ -85,40 +91,77 @@ void draw()
   // which contains the mix of both the left and right channels of the file
   fft.forward( song.mix );
   
-  float xDestraCharacter = character.getX() + character.raggio;
-  float xSinistraCharacter = character.getX() - character.raggio;
-  float yAltoCharacter = character.getY() + character.raggio;
-  float yBassoCharacter = character.getY() - character.raggio;
-  for(int i=0; i < numObstacles; i++){
-    float xDestraOst = obstacles.get(i).getX() + obstacles.get(i).dim;
-    float xSinistraOst = obstacles.get(i).getX() - obstacles.get(i).dim;
-    float yAltoOst = obstacles.get(i).getY() + obstacles.get(i).dim;
-    float yBassoOst = obstacles.get(i).getY() - obstacles.get(i).dim;
-    float zPosOst = obstacles.get(i).getZ() + obstacles.get(i).dim;
-    float zNegOst = obstacles.get(i).getZ() - obstacles.get(i).dim;
-    if((xDestraOst > xSinistraCharacter && xDestraOst < xDestraCharacter) || (xSinistraOst > xSinistraCharacter && xSinistraOst < xDestraCharacter)){  // collisione su x
-      if((yBassoOst > yAltoCharacter && yBassoOst < yBassoCharacter) || (yAltoOst > yBassoCharacter && yAltoOst < yAltoCharacter)){ // collisione su y
-        if(character.getZ() < zPosOst && character.getZ() > zNegOst){
-        character.gameOver = true;
-        }
-      }
-    }
-  } // for
-  
   // Traslo per fare in modo che la scena sia al centro dello schermo
   translate(width/2, height/2, 0);
   
   stroke(255,0,0); // rosso
   character.display(); // grazie alla traslazione viene posizionato al centro (inizialmente)
   
-  // Mostro gli ostacoli
+  // Aggiorno ostacoli e collisioni
   stroke(0,255,0); // verde
-  for(int i = 0; i < numObstacles; i++){  
-   obstacles.get(i).display();
+  for(int i = 0; i < obstacles.size(); i++){
+    Obstacle temp = obstacles.get(i);
+    if(temp.R <= 0){ // controllo se l'ostacolo deve sparire
+     obstacles.remove(i);
+     insertObstacle();
+    }
+    // scrivo gia i valori delle dimensioni per non dover accedere ogni volta all'oggetto
+    if(collisionDetection(temp.x, temp.y, 30.0, 30.0, character.x, character.y, 25.0)){ // controllo le collisioni con il personaggio
+     obstacles.remove(i);
+     insertObstacle();
+    }
+     temp.display();
   }
   
-  stroke(0,0,255);  // blu
+  // Aggiorno ostacoli (dannosi) e collisioni
+  stroke(255,0,255); // viola
+  for(int i = 0; i < enemies.size(); i++){
+    Obstacle temp = enemies.get(i);
+    if(temp.R <= 0){ // controllo se l'ostacolo deve sparire
+     enemies.remove(i);
+     insertEnemie();
+    }
+    // scrivo gia i valori delle dimensioni per non dover accedere ogni volta all'oggetto
+    if(collisionDetection(temp.x, temp.y, 30.0, 30.0, character.x, character.y, 25.0)){ // controllo le collisioni con il personaggio
+     character.gameOver = true;
+    }
+     temp.display();
+  }
+  stroke(0,0,255);  // blu per lo spettro
   
-  spettri.display();
+  ellipse.display();
     
 }  // void draw()
+
+void insertObstacle(){
+    Obstacle obstacle = new Obstacle();
+    obstacles.add(obstacle);
+}
+
+void insertEnemie(){
+    Obstacle enemie = new Obstacle();
+    enemies.add(enemie);
+}
+
+boolean collisionDetection(float boxx, float boxy,float boxWidth, float boxHeight, float circleCenterX, float circleCenterY, float radius){
+  float closeX = circleCenterX;
+  float closeY = circleCenterY;
+  
+  // controllo il lato sx del rettangolo
+  if(circleCenterX < boxx) closeX = boxx;
+  
+  // lato dx del rettangolo
+  if(circleCenterX > boxx + boxWidth) closeX = boxx + boxWidth;
+  
+  // controllo il lato superiore del rettangolo
+  if(circleCenterY < boxy) closeY = boxy;
+  
+  // lato inferiore del rettangolo
+  if(circleCenterY > boxy + boxHeight) closeY = boxy + boxHeight;
+  
+  float distance = sqrt(sq(closeX - circleCenterX) + sq(closeY - circleCenterY));
+  
+  if(distance < radius) return true;
+  
+  return false;
+}
