@@ -1,29 +1,26 @@
-# Svolgimento:
+3D troppo difficile da gestire (collisioni) => Gioco in 2D in cui sul bordo dello schermo vedo lo spettro del segnale mentre nella parte centrale dello schermo c'è un personaggio che per
+sopravvivere deve raccogliere delle forme geometriche che se appaiono nelle zone in cui lo spettro è + "forte" hanno opacità maggiore e durano 
+di + sulla scena, se appaiono in zone in cui lo spettro è + debole sono + trasparenti e dopo un pò si dissolvono.
+Si possono fare + livelli ad esempio uno con la circonferenza, uno all'interno di un'ellisse e uno con un rettangolo (che seguono lo spettro).
 
-Partendo dall'esempio minim/examples/Basics/AnalyseSound che mostra una FFT per analizzare un audio generato da un AudioPlayer
+Fatto:
+* Spettro ellittico e spettro circolare 23/07
+* Apparizione random e opacità (sopravvivenza) 23/07
+* Collisioni circonferenza-quadrato 23/07
+* Ostacoli buoni e ostacoli cattivi aggiunti 23/07
 
-## Note:
+Da fare:
+* Variabile time per i tre livelli? (circonf, ellisse, rettangolo) OPPURE tre cose separate?
+* Applicare filtri alla trasformata (lowPass, highPass, passabanda) con keyPressed()
 
-* Origine in (0,0) (in alto a sinistra sullo schermo)
-* X positivo verso destra
-* Y positivo verso il basso
-* "camera" guarda verso -Z
+Link utili:
 
-## Fatto:
+1) audio visualization (cubes) https://www.youtube.com/watch?v=gHpxRv4MBBA
 
-* Scaricata libreria minim da github 17/07
-* Modificata la rappresentazione della trasformata in modo che compia un movimento su una circonferenza 18/07
-* Inserire oggetto (cubo o sfera) che rappresenterà il personaggio da muovere 18/07
-* Animare l'oggetto con tasti freccia 18/07
-* Inserire ostacoli e limitare la loro posizione 18/07
-* Cambiata la rappresentazione dello spettro da circolare a ellittica 19/07
-* Inserito movimento ellittico per il personaggio 19/07
-* Aggiunta classe Spectrum per gestire gli spettri in file separato 19/07
-* Prima prova delle collisioni 19/07
-* Inserire velocità di movimento su z 19/07
+2) start field https://www.youtube.com/watch?v=17WoOqgXsRM
 
-## Da fare:
+3) purple rain https://www.youtube.com/watch?v=KkyIDI6rQJI
 
-* Righe per collegare le ellissi
-* Sistemare collisioni
-* Applicare filtri alla trasformata (lowPass, highPass, passabanda)
+4) documentazione minim http://code.compartmental.net/minim/javadoc/
+
+5) documentazione processing https://processing.org/reference/
