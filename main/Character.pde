@@ -1,11 +1,11 @@
 class Character {
 
-  // variabili per la rotazione del personaggio attorno all'ellisse (all'interno)
+  // Variabili per la rotazione del personaggio attorno all'ellisse (all'interno)
   protected boolean animation = true; // rotazione attiva o meno
-  private float angoloCharacter = random(360);
-  private float incrementoAngoloCharacter = 0.5;
-  // variabili per la posizione del personaggio
-  protected float x = 500.0 * cos(radians(angoloCharacter)); // 500 perche sarebbe 250.0 *...* 2 = a (dimensione) dell'ellisse
+  private float angoloCharacter = random(360); // scelgo una posizione pseudo-casuale
+  private float incrementoAngoloCharacter = 0.5; // velocita del personaggio
+  // Variabili per la posizione del personaggio
+  protected float x = 500.0 * cos(radians(angoloCharacter)); // 500 perche sarebbe 250.0 *...* 2 con 2 = a (dimensione) dell'ellisse su x
   protected float y = 250.0 * sin(radians(angoloCharacter));
   protected boolean gameOver = false;
   
@@ -34,7 +34,7 @@ class Character {
     }else{ // gameOver => porto il personaggio al centro
       // scrivo gia i valori delle dimensioni per non dover accedere ogni volta all'oggetto
       ellipse(0.0, 0.0, 25.0, 25.0);
-      angoloCharacter = random(360);
+      angoloCharacter = random(360); // posizione di successivo rientro pseudo-casuale
     }
   }
 
