@@ -9,10 +9,11 @@ Si possono fare + livelli ad esempio uno con la circonferenza, uno all'interno d
 * Apparizione random e opacità (sopravvivenza) 23/07
 * Collisioni circonferenza-quadrato 23/07
 * Ostacoli buoni e ostacoli cattivi aggiunti 23/07
+* Aggiunta possibilità di applicare effetti da tastiera (keyPressed()) 24/07
 
 ## Da fare:
+* Settare valori sensati per i tre filtri
 * Variabile time per i tre livelli? (circonf, ellisse, rettangolo) OPPURE tre cose separate?
-* Applicare filtri alla trasformata (lowPass, highPass, passabanda) con keyPressed()
 
 ## Link utili:
 

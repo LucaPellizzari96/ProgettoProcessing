@@ -13,11 +13,16 @@
   */
 
 import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
 import ddf.minim.*;
+
 
 Minim minim;
 AudioPlayer song;
 FFT fft;
+LowPassSP lowPass;
+HighPassSP highPass;
+BandPass bandPass;
 // personaggio e ostacoli
 Character character = new Character();  // costruttore del personaggio
 int numObstacles = 3; // numero di ostacoli "buoni"
@@ -67,20 +72,40 @@ void setup()
 
 // Gestisco il movimento del personaggio
 void keyPressed(){
-  switch(keyCode){ // keyCode : variabile speciale per riconoscere alcuni caratteri particolari
-    case UP:
-      character.animate();
-      break;
-    case DOWN:
-      character.invertAngle();
-      break;
-    case ENTER:
-      character.gameOver = false;
-      character.animation = true;
-      break;
-    default:
-      break;
+  if(key == CODED){ // carattere speciale
+    switch(keyCode){ // keyCode : variabile speciale per riconoscere alcuni caratteri particolari
+      case UP:
+        character.animate();
+        break;
+      case DOWN:
+        character.invertAngle();
+        break;
+      default:
+        break;
+    } // switch
+  }else{ // carattere normale
+    switch(key){
+      case 'l':
+        addEffect(0);
+        break;
+      case 'h':
+        addEffect(1);
+        break;
+      case 'b':
+        addEffect(2);
+        break;
+      case 'n':
+        addEffect(3);
+        break;
+      case ENTER:
+        character.gameOver = false;
+        character.animation = true;
+        break;
+      default:
+        break;
+    } // switch
   }
+    
 } // keyPressed()
 
 void draw()
@@ -164,4 +189,36 @@ boolean collisionDetection(float boxx, float boxy,float boxWidth, float boxHeigh
   if(distance < radius) return true;
   
   return false;
+}
+
+void addEffect(int effect){
+  switch(effect){
+    case 0:
+      song.clearEffects();
+      lowPass = new LowPassSP(200,44100); // cutoff frequency e samplerate
+      song.addEffect(lowPass);
+      break;
+    case 1:
+      song.clearEffects();
+      highPass = new HighPassSP(400,44100); // cutoff frequency e samplerate
+      song.addEffect(highPass);
+      break;
+    case 2:
+      song.clearEffects();
+      bandPass = new BandPass(200, 400, 44100); // cutoff frequency, bandWidth to pass e samplerate
+      song.addEffect(bandPass);
+      break;
+    case 3:
+      song.clearEffects();
+      break;
+    default:
+      break;
+  } // switch
+}
+
+void stop()
+{
+  song.close();
+  minim.stop();
+  super.stop();
 }
