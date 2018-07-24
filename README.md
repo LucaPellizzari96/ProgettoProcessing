@@ -40,6 +40,8 @@ Lettura degli esempi presenti nelle varie sezioni della documentazione per capir
 * Aggiunta possibilità di applicare filtri (lowPass, highPass, bandPass) da tastiera tramite funzione keyPressed()
 * Inserito punteggio con lifeline gialla che cala con il tempo e in base agli ostacoli colpiti
 * Canzone ferma quando perdo (game over)
+* Lifeline sostituita con spettro che contiene la mobile average lineare della fft (numero di campioni mostrati cala con il tempo)
+* Semplificata la leggibilità del metodo draw() raccogliendo i vari for in diverse funzioni
 
 ## Da fare:
 

@@ -20,6 +20,7 @@ FFT fft;
 LowPassSP lowPass;
 HighPassSP highPass;
 BandPass bandPass;
+
 // Personaggio
 Character character = new Character();
 // Ostacoli buoni
@@ -31,12 +32,13 @@ ArrayList<Obstacle> enemies = new ArrayList<Obstacle>(); // array che contiene g
 // Spettro
 EllipticSpectrum ellipse = new EllipticSpectrum();
 //SphereSpectrum sphere = new SphereSpectrum();
+Lifeline lifeline = new Lifeline();
 // Costruzione ellisse
 float a = 2; // dimensioni dell'ellisse (orizzontale); dimensione verticale b = 1 => non serve scriverla
 float incrementoAngolo = 360.0/512.0; // incremento dell'angolo = numero di gradi/numero di campioni
 float angolo = 0; // angolo per lo spettro attorno alla circonferenza (mappata in un'ellisse)
 // Punteggio
-int score = 750;
+float score = 750.0;
 int frame = 0;
 
 void setup()
@@ -58,6 +60,8 @@ void setup()
   // note that this needs to be a power of two 
   // and that it means the size of the spectrum will be half as large.
   fft = new FFT( song.bufferSize(), song.sampleRate() );
+  
+  fft.linAverages(128); // TODO
  
   // Inserisco gli ostacoli buoni nell'arraylist
   for(int i = 0; i < numObstacles; i++){
@@ -84,60 +88,21 @@ void draw()
   // Traslo per fare in modo che la scena sia al centro dello schermo
   translate(width/2, height/2, 0);
   
-  stroke(255,255,0); // linea gialla
-  line(-width/4, 0, score - width/4, 0); 
+  stroke(255,255,0); // mobileAverage lifeline in giallo
+  lifeline.display();
   
   stroke(255,0,0); // bordo rosso per il personaggio
   character.display(); // grazie alla traslazione viene posizionato al centro (inizialmente)
   
-  // Aggiorno ostacoli "buoni" e gestisco le eventuali collisioni con essi
-  stroke(0,255,0); // bordo verde
-  for(int i = 0; i < obstacles.size(); i++){
-    Obstacle temp = obstacles.get(i);
-    if(temp.R <= 0){ // controllo se l'ostacolo deve sparire
-     obstacles.remove(i);
-     insertObstacle();
-    }
-    // scrivo gia i valori delle dimensioni per non dover accedere ogni volta agli oggetti
-    if(collisionDetection(temp.x, temp.y, 30.0, 30.0, character.x, character.y, 25.0)){ // controllo le collisioni con il personaggio
-     score += 15; // ostacolo buono => incremento il punteggio
-     obstacles.remove(i);
-     insertObstacle();
-    }
-     temp.display();
-  }
+  updateObstacles();
   
-  // Aggiorno ostacoli "cattivi" e gestisco le eventuali collisioni con essi
-  stroke(255,0,255); // bordo viola
-  for(int i = 0; i < enemies.size(); i++){
-    Obstacle temp = enemies.get(i);
-    if(temp.R <= 0){ // controllo se l'ostacolo deve sparire
-     enemies.remove(i);
-     insertEnemie();
-    }
-    // scrivo gia i valori delle dimensioni per non dover accedere ogni volta agli oggetti
-    if(collisionDetection(temp.x, temp.y, 30.0, 30.0, character.x, character.y, 25.0)){ // controllo le collisioni con il personaggio
-     score -= 10; // ostacolo cattivo => decremento il punteggio
-     enemies.remove(i);
-     insertEnemie();
-    }
-     temp.display();
-  }
+  updateEnemies();
   
   stroke(0,0,255);  // blu per lo spettro
   
   ellipse.display(); // spettro ellittico
 
-  // controllo il punteggio
-  if(score > 0){
-    if(frame > 4){
-      score--;
-      frame = 0;
-    }
-  }else{
-    character.gameOver = true;
-    song.pause();
-  }
+  checkScore();
   
   frame++;
     
@@ -225,6 +190,47 @@ boolean collisionDetection(float boxx, float boxy,float boxWidth, float boxHeigh
   
 } // collisionDetection()
 
+// Aggiorno ostacoli "buoni" e gestisco le eventuali collisioni con essi
+void updateObstacles(){
+  stroke(0,255,0); // bordo verde
+  for(int i = 0; i < obstacles.size(); i++){
+    Obstacle temp = obstacles.get(i);
+    if(temp.R <= 0){ // controllo se l'ostacolo deve sparire
+     obstacles.remove(i);
+     insertObstacle();
+    }
+    // scrivo gia i valori delle dimensioni per non dover accedere ogni volta agli oggetti
+    if(collisionDetection(temp.x, temp.y, 30.0, 30.0, character.x, character.y, 25.0)){ // controllo le collisioni con il personaggio
+     score += 15; // ostacolo buono => incremento il punteggio
+     if(score > 750.0){
+       score = 750.0;
+     }
+     obstacles.remove(i);
+     insertObstacle();
+    }
+     temp.display();
+  }
+} // updateObstacles()
+
+// Aggiorno ostacoli "cattivi" e gestisco le eventuali collisioni con essi
+void updateEnemies(){
+  stroke(255,0,255); // bordo viola
+  for(int i = 0; i < enemies.size(); i++){
+    Obstacle temp = enemies.get(i);
+    if(temp.R <= 0){ // controllo se l'ostacolo deve sparire
+     enemies.remove(i);
+     insertEnemie();
+    }
+    // scrivo gia i valori delle dimensioni per non dover accedere ogni volta agli oggetti
+    if(collisionDetection(temp.x, temp.y, 30.0, 30.0, character.x, character.y, 25.0)){ // controllo le collisioni con il personaggio
+     score -= 10; // ostacolo cattivo => decremento il punteggio
+     enemies.remove(i);
+     insertEnemie();
+    }
+     temp.display();
+  }
+} // updateEnemies()
+
 // Funzione che dato un intero in [0,...,3] applica un filtro al segnale in base al valore dell'intero
 void addEffect(int effect){
   switch(effect){
@@ -250,6 +256,19 @@ void addEffect(int effect){
       break;
   } // switch
 } // addEffect()
+
+// Controllo il punteggio
+void checkScore(){
+  if(score > 0){
+    if(frame > 4){
+      score--;
+      frame = 0;
+    }
+  }else{ // score <= 0 quindi game over
+    character.gameOver = true;
+    song.pause();
+  }
+} // checkScore()
 
 // Funzione che interrompe l'animazione
 void stop()
