@@ -43,12 +43,22 @@ Lettura degli esempi presenti nelle varie sezioni della documentazione per capir
 * Lifeline sostituita con spettro che contiene la mobile average lineare della fft (numero di campioni mostrati cala con il tempo)
 * Semplificata la leggibilità del metodo draw() raccogliendo i vari for in diverse funzioni
 
+*31 luglio*
+
+* Refactoring del main
+* La canzone riparte da capo quando perdo
+* Dopo aver visto l'implementazione della classe AudioPlayer e della sua superclasse AudioSource della libreria Minim ho impostato una frequenza di taglio
+per i filtri che dipende dalla posizione su y del mouse
+
 ## Da fare:
 
 * map(fft.getBand(i), 0,1,...) OPPURE map(fft.getBand(i), 0,25,...) sia per ellisse che per sfera
 * Lifeline che si muove in base al valore mobileAverage degli ultimi campioni
 * Settare valori sensati per i tre filtri (vedere teoria)
-* Variabile time per i tre livelli? (circonf, ellisse, rettangolo) OPPURE tre cose separate?
+* Possibilità di aumentare/diminuire la frequenza di taglio dei filtri con '-' e '+' (?)
+
+* Nuovo livello con rettangolo (forma d'onda non fft); movimento libero in tutte le direzioni all'interno del rettangolo, mangiare gli ostacoli per sopravvivere,
+tipo snake 2D
 
 ## Link utili:
 

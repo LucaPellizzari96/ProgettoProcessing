@@ -31,7 +31,7 @@ int numEnemies = 3; // numero di ostacoli
 ArrayList<Obstacle> enemies = new ArrayList<Obstacle>(); // array che contiene gli ostacoli
 // Spettro
 EllipticSpectrum ellipse = new EllipticSpectrum();
-//SphereSpectrum sphere = new SphereSpectrum();
+//RectangularWaveform rectangle = new RectangularWaveform();
 Lifeline lifeline = new Lifeline();
 // Costruzione ellisse
 float a = 2; // dimensioni dell'ellisse (orizzontale); dimensione verticale b = 1 => non serve scriverla
@@ -98,6 +98,8 @@ void draw()
   
   updateEnemies();
   
+  updateFilter();
+  
   stroke(0,0,255);  // blu per lo spettro
   
   ellipse.display(); // spettro ellittico
@@ -138,6 +140,7 @@ void keyPressed(){
       case ENTER:
         if(character.gameOver){ // se ho perso
           // riprendo la partita
+          song.rewind();
           song.loop();
           character.gameOver = false;
           character.animation = true;
@@ -193,42 +196,48 @@ boolean collisionDetection(float boxx, float boxy,float boxWidth, float boxHeigh
 // Aggiorno ostacoli "buoni" e gestisco le eventuali collisioni con essi
 void updateObstacles(){
   stroke(0,255,0); // bordo verde
-  for(int i = 0; i < obstacles.size(); i++){
+  
+  for(int i = 0; i < obstacles.size(); i++){ // per ogni ostacolo
     Obstacle temp = obstacles.get(i);
-    if(temp.R <= 0){ // controllo se l'ostacolo deve sparire
+    // Controllo se l'ostacolo deve sparire per il tempo
+    if(temp.R <= 0){
      obstacles.remove(i);
      insertObstacle();
     }
-    // scrivo gia i valori delle dimensioni per non dover accedere ogni volta agli oggetti
-    if(collisionDetection(temp.x, temp.y, 30.0, 30.0, character.x, character.y, 25.0)){ // controllo le collisioni con il personaggio
-     score += 15; // ostacolo buono => incremento il punteggio
+    // Controllo le collisioni con il personaggio: scrivo gia i valori delle dimensioni per non dover accedere ogni volta agli oggetti
+    if(collisionDetection(temp.x, temp.y, 30.0, 30.0, character.x, character.y, 25.0)){
+     score += 15; // incremento il punteggio
      if(score > 750.0){
-       score = 750.0;
+       score = 750.0; // normalizzo il punteggio se va oltre il massimo
      }
-     obstacles.remove(i);
-     insertObstacle();
+     obstacles.remove(i); // rimuovo l'ostacolo colpito e
+     insertObstacle(); // ne inserisco uno nuovo
     }
      temp.display();
-  }
+  } // for
+  
 } // updateObstacles()
 
 // Aggiorno ostacoli "cattivi" e gestisco le eventuali collisioni con essi
 void updateEnemies(){
   stroke(255,0,255); // bordo viola
+
   for(int i = 0; i < enemies.size(); i++){
     Obstacle temp = enemies.get(i);
-    if(temp.R <= 0){ // controllo se l'ostacolo deve sparire
+    // Controllo se l'ostacolo deve sparire per il tempo
+    if(temp.R <= 0){
      enemies.remove(i);
      insertEnemie();
     }
-    // scrivo gia i valori delle dimensioni per non dover accedere ogni volta agli oggetti
-    if(collisionDetection(temp.x, temp.y, 30.0, 30.0, character.x, character.y, 25.0)){ // controllo le collisioni con il personaggio
-     score -= 10; // ostacolo cattivo => decremento il punteggio
-     enemies.remove(i);
-     insertEnemie();
+    // Controllo le collisioni con il personaggio: scrivo gia i valori delle dimensioni per non dover accedere ogni volta agli oggetti
+    if(collisionDetection(temp.x, temp.y, 30.0, 30.0, character.x, character.y, 25.0)){
+     score -= 10; // decremento il punteggio
+     enemies.remove(i); // rimuovo l'ostacolo colpito e
+     insertEnemie(); // ne inserisco uno nuovo
     }
      temp.display();
-  }
+  } // for
+  
 } // updateEnemies()
 
 // Funzione che dato un intero in [0,...,3] applica un filtro al segnale in base al valore dell'intero
@@ -257,10 +266,21 @@ void addEffect(int effect){
   } // switch
 } // addEffect()
 
+// Aggiorno la frequenza di taglio dei filtri in base alla posizione del mouse su Y
+void updateFilter(){
+  if(song.hasEffect(lowPass)){
+    lowPass.setFreq( map(mouseY, height, 0, 10000, 100));
+  }else if(song.hasEffect(highPass)){
+    highPass.setFreq( map(mouseY, height, 0, 10000, 100));
+  }else if(song.hasEffect(bandPass)){
+    bandPass.setFreq( map(mouseY, height, 0, 10000, 100));
+  }
+}
+
 // Controllo il punteggio
 void checkScore(){
-  if(score > 0){
-    if(frame > 4){
+  if(score > 0){ // punteggio non negativo
+    if(frame > 4){ // ogni 4 frame
       score--;
       frame = 0;
     }
