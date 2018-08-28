@@ -30,6 +30,7 @@ float oldScoreHi = scoreHi;
 
 // "Attenuazione" => valore maggiore = velocita minore
 float scoreDecreaseRate = 25;
+
 float scoreGlobal = 0.0;
 
 // PERSONAGGIO E OSTACOLI
@@ -51,11 +52,12 @@ float dist = -25;
 
 float score = 0.0;
 
-void setup()
-{
+void setup(){
+  
   // O fullScreen() oppure size() sono la prima riga obbligatoria del setup
   fullScreen(P3D); // P3D e' il renderer scelto
   
+  // Carico il font per le scritte finali
   f = createFont("../data/SourceCodePro-Regular.ttf", 40);
   textFont(f);
  
@@ -95,14 +97,13 @@ void setup()
   
 } // setup
  
-void draw()
-{
+void draw(){
+  
   // Fa avanzare la canzone, draw() per ogni "frame" della canzone
   fft.forward(song.mix); // mix : AudioBuffer che contiene il mix dei canali left e right
   // se mono mix contiene solo i campioni left e right contiene gli stessi campioni di left
   
-  // Calcolo di "punteggi" (potenza) per le tre categorie di suoni
-  // Prima di tutto salvo i vecchi valori
+  // Calcolo di "punteggi" (potenza) per le tre categorie di suoni, dopo aver salvato i valori precedenti
   oldScoreLow = scoreLow;
   oldScoreMid = scoreMid;
   oldScoreHi = scoreHi;
@@ -111,42 +112,20 @@ void draw()
   scoreLow = 0;
   scoreMid = 0;
   scoreHi = 0;
- 
+  
   // Calcolo i nuovi valori
-  for(int i = 0; i < fft.specSize()*specLow; i++){ // specSize() : restituisce la dimensione dello spettro creato dalla trasformata
-    scoreLow += fft.getBand(i); // getBand() : restituisce l'ampiezza (float) della banda di frequenza richiesta
-  }
-  
-  for(int i = (int)(fft.specSize()*specLow); i < fft.specSize()*specMid; i++){
-    scoreMid += fft.getBand(i);
-  }
-  
-  for(int i = (int)(fft.specSize()*specMid); i < fft.specSize()*specHi; i++){
-    scoreHi += fft.getBand(i);
-  }
+  updateScores();
   
   // Faccio rallentare (attenuo) la velocita su z sottraendo scoreDecreaseRate
+  checkAttenuation();
   
-  if (oldScoreLow > scoreLow){
-    scoreLow = oldScoreLow - scoreDecreaseRate;
-  }
-  
-  if (oldScoreMid > scoreMid){
-    scoreMid = oldScoreMid - scoreDecreaseRate;
-  }
-  
-  if (oldScoreHi > scoreHi){
-    scoreHi = oldScoreHi - scoreDecreaseRate;
-  }
-  
-  // Volume per tutte le frequenze in questo momento, con i suoni più alti + importanti
-  // Cio' consente all'animazione di andare + veloce per i suoni più acuti, che notiamo maggiormente
-  scoreGlobal = 0.66*scoreLow + 0.8*scoreMid + 1*scoreHi;
   // Colore "leggero" di sottofondo
   background(scoreLow/100, scoreMid/100, scoreHi/100);
-  
-  
+ 
   if(!gameOver){
+  
+    // Punteggio per tutte le frequenze in questo momento, l'animazione va + veloce per i suoni più acuti, che notiamo maggiormente
+    scoreGlobal = 0.66*scoreLow + 0.8*scoreMid + 1*scoreHi;
     
     character.display();
     
@@ -163,20 +142,55 @@ void draw()
     updateFilter();
     
   }else{ // Game Over
+  
     // Testo che indica il gameover
+    fill(255);
     textAlign(CENTER);
     text("Game Over", width/2, height/2 -15);
     text("Press Enter to retry", width/2, height/2 + 30);
     text("Score: " + str(int(score)), width/2, height/2 + 80);
+    
     // Metto in pausa la canzone
     song.pause();
+    
     // Ripristino gli effetti iniziali (nessuno)
     song.clearEffects();
+    
     // Resetto le impostazioni del personaggio (posizione,...)
     character.reset();
   }
   
 }  // draw()
+
+// Aggiorno il punteggio delle varie zone dello spettro
+void updateScores(){
+  for(int i = 0; i < fft.specSize()*specLow; i++){ // specSize() : restituisce la dimensione dello spettro creato dalla trasformata
+    scoreLow += fft.getBand(i); // getBand() : restituisce l'ampiezza (float) della banda di frequenza richiesta
+  }
+  
+  for(int i = (int)(fft.specSize()*specLow); i < fft.specSize()*specMid; i++){
+    scoreMid += fft.getBand(i);
+  }
+  
+  for(int i = (int)(fft.specSize()*specMid); i < fft.specSize()*specHi; i++){
+    scoreHi += fft.getBand(i);
+  }
+} // updateScores()
+
+// Controllo se i vecchi valori dei punteggi sono maggiori di quelli attuali e in caso affermativo calcolo l'attenuazione
+void checkAttenuation(){
+  if (oldScoreLow > scoreLow){
+    scoreLow = oldScoreLow - scoreDecreaseRate;
+  }
+  
+  if (oldScoreMid > scoreMid){
+    scoreMid = oldScoreMid - scoreDecreaseRate;
+  }
+  
+  if (oldScoreHi > scoreHi){
+    scoreHi = oldScoreHi - scoreDecreaseRate;
+  }
+} // checkAttenuation()
 
 void displayObstacles(){
   for(int i = 0; i < numObstacles; i++){
@@ -194,7 +208,6 @@ void drawSpectrum(){
   for(int i = 0; i < fft.specSize(); i++){
     
     float bandValue = fft.getBand(i);
-
     line(width*2/5, height, dist*i, width*2/5, height,dist*(i+1)); // linea fra la prima e la seconda corsia
     line(width*3/5, height, dist*i, width*3/5, height,dist*(i+1)); // linea fra la seconda e la terza corsia
     line(endingPoint, height, dist*i, endingPoint, height-bandValue*1.5,dist*i); // confine destro della pista
@@ -264,14 +277,14 @@ boolean collisionZ(float z){
   // Supponiamo che gli ostacoli siano rivolti verso di noi, mentre il personaggio ci da le spalle
   
   // parte avanti
-  if(z + 50.0 >= -225.0){ // parte avanti (quella che guarda verso di noi) dell'ostacolo + avanti rispetto alla parte avanti (quella non verso di noi) del personaggio e
-    if(z + 50.0 <= -125.0){ // parte avanti dell'ostacolo + indietro della parte dietro (la faccia del cubo che "guarda" verso di noi) del personaggio
+  if(z + 50.0 >= -200.0){ // parte avanti (quella che guarda verso di noi) dell'ostacolo + avanti rispetto alla parte avanti (quella non verso di noi) del personaggio e
+    if(z + 50.0 <= -100.0){ // parte avanti dell'ostacolo + indietro della parte dietro (la faccia del cubo che "guarda" verso di noi) del personaggio
     collisionZ = true;
     }
   }
   // parte dietro
-  if(z - 50.0 >= - 225.0){ // parte dietro (quella che non guarda verso di noi) dell'ostacolo + avanti rispetto alla parte avanti (quella non verso di noi) del personaggio e
-    if(z - 50.0 <= -125.0){ // parte dietro dell'ostacolo + indietro della parte dietro (la faccia del cubo che "guarda" verso di noi) del personaggio
+  if(z - 50.0 >= - 200.0){ // parte dietro (quella che non guarda verso di noi) dell'ostacolo + avanti rispetto alla parte avanti (quella non verso di noi) del personaggio e
+    if(z - 50.0 <= -100.0){ // parte dietro dell'ostacolo + indietro della parte dietro (la faccia del cubo che "guarda" verso di noi) del personaggio
     collisionZ = true;
     }
   }

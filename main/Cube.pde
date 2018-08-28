@@ -1,7 +1,7 @@
 class Cube {
   
 // Valori delle posizioni
-protected int limite = 1;
+protected int target = 1;
 float y;
 protected float x, z;
 protected boolean moveLeft, moveRight;
@@ -9,8 +9,8 @@ protected boolean moveLeft, moveRight;
 // COSTRUTTORE
 Cube(){
   x = width/2;
-  y = height;
-  z = -175.0;
+  y = height - 50;
+  z = -150.0;
 }
   
 void display(){
@@ -28,8 +28,7 @@ void display(){
   // Utilizzo pushMatrix() e poi popMatrix() perche voglio che il movimento sia locale e che quindi riguardi solo questa parte della scena
   pushMatrix(); // salva il sistema di coordinate corrente sullo stack
     
-  // Applico dei cambiamenti al sitema di coordinate, disegno il cubo nella scena e poi ripristino
-  // il vecchio sistema di coordinate con popMatrix()
+  // Applico dei cambiamenti al sitema di coordinate, disegno il cubo nella scena e poi ripristino il vecchio sistema di coordinate con popMatrix()
     
   // Displacement
   translate(x, y, z);
@@ -41,27 +40,27 @@ void display(){
 }  // void display
 
 void moveLeft(){
-  switch(limite){
+  switch(target){
     case 1:
-      if(x >= width*3/10 && x <= width/2) limite = 0;
+      if(x >= width*3/10 && x <= width/2) target = 0;
       break;
     case 2:
-      if(x >= width/2 && x <= width*7/10) limite = 1;
+      if(x >= width/2 && x <= width*7/10) target = 1;
       break;
     default:
       break;
   } // switch
-  if(limite == 0){ // sto andando dalla corsia 1 alla 0
-    if(x-8 >= width*3/10){ // non sono ancora arrivato
+  if(target == 0){ // sto andando dalla corsia 1 alla 0
+    if(x-8 > width*3/10){ // non sono ancora arrivato
       x -= 8;
-    }else{ // se andrei troppo oltre
+    }else{ // se andrei troppo oltre o arriverei giusto
       x = width*3/10;
       moveLeft = false;
     }
-  }else if(limite == 1){ // sto andando dalla corsia 2 alla 1
-    if(x-8 >= width/2){ // non sono ancora arrivato
+  }else if(target == 1){ // sto andando dalla corsia 2 alla 1
+    if(x-8 > width/2){ // non sono ancora arrivato
       x -= 8;
-    }else{ // se andrei troppo oltre
+    }else{ // se andrei troppo oltre o arriverei giusto
       x = width/2;
       moveLeft = false;
     }
@@ -69,27 +68,27 @@ void moveLeft(){
 } // moveLeft()
 
 void moveRight(){
-  switch(limite){
+  switch(target){
     case 0:
-      if(x >= width*3/10 && x <= width/2) limite = 1;
+      if(x >= width*3/10 && x <= width/2) target = 1;
       break;
     case 1:
-      if(x >= width/2 && x <= width*7/10) limite = 2;
+      if(x >= width/2 && x <= width*7/10) target = 2;
       break;
     default:
       break;
   } // switch
-  if(limite == 1){ // sto andando dalla corsia 0 alla 1
-    if(x+8 <= width/2){ // non sono ancora arrivato
+  if(target == 1){ // sto andando dalla corsia 0 alla 1
+    if(x+8 < width/2){ // non sono ancora arrivato
       x += 8;
-    }else{ // se andrei troppo oltre
+    }else{ // se andrei troppo oltre o arriverei giusto
       x = width/2;
       moveRight = false;
     }
-  }else if(limite == 2){ // sto andando dalla corsia 1 alla 2
-    if(x+8 <= width*7/10){ // non sono ancora arrivato
+  }else if(target == 2){ // sto andando dalla corsia 1 alla 2
+    if(x+8 < width*7/10){ // non sono ancora arrivato
       x += 8;
-    }else{ // se andrei troppo oltre
+    }else{ // se andrei troppo oltre o arriverei giusto
       x = width*7/10;
       moveRight = false;
     }
@@ -99,8 +98,8 @@ void moveRight(){
 void reset(){
   x = width/2;
   y = height;
-  z = -175.0;
-  limite = 1;
+  z = -150.0;
+  target = 1;
   moveRight = false;
   moveLeft = false;
 }

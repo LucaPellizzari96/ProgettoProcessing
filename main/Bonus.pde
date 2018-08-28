@@ -15,7 +15,7 @@ class Bonus {
     if (chooseX < 11) x = width*3/10; // al centro della prima corsia
     if (chooseX > 10 && x < 22) x = width/2; // al centro della seconda corsia
     if (chooseX > 21) x = width*7/10; // al centro della terza corsia
-    y = height;
+    y = height - 50;
     z = random(startingZ, -350);
   }
   
@@ -55,7 +55,7 @@ class Bonus {
     if (chooseX < 11) x = width*3/10; // al centro della prima corsia
     if (chooseX > 10 && x < 22) x = width/2; // al centro della seconda corsia
     if (chooseX > 21) x = width*7/10; // al centro della terza corsia
-    y = height; // nuovo valore per la y
+    y = height - 50; // nuovo valore per la y
     z = startingZ; // z = posizione + lontana dalla camera => il nuovo cubo si trova "in fondo" alla scena
   }
   

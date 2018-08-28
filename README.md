@@ -16,7 +16,9 @@ di 10000 Hz. Il gioco termina quando si colpisce un ostacolo (cubo grigio) e il 
 punteggio calcolato in base alla "velocità" con cui i cubi avanzano durante la partita. Questa velocità è determinata principalmente dall'intensità dei toni alti nello spettro della canzone di sottofondo.
 Ho deciso di dare un minimo di importanza anche all'aspetto grafica 3D, ovvero ho cercato di fare in modo che ilsistema di gestione delle collisioni con i vari ostacoli fosse preciso. Il sistema è composto principalmente
 da due funzioni, una che calcola la collisione sull'asse delle x e l'altra che calcola la collisione sull'asse delle z. Gli oggetti della scena si muovono quasi tutti solo sull'asse z, mentre il cubo scelto come
-personaggio si muove anche su x per poter evitare gli ostacoli schivandoli lateralmente.
+personaggio si muove anche su x per poter evitare gli ostacoli schivandoli lateralmente. La velocità con cui gli ostacoli avanzano durante la partita è determinata dal valore della variabile globale scoreGlobal
+che viene ricalcolata ad ogni frame in base ai valori delle tre zone dello spettro (bassi, medi, alti) secondo la formula scoreGlobal = 0.66*scoreLow + 0.8*scoreMid + 1*scoreHi; quindi come già detto prima diamo
+maggiore importanza ai toni alti che sono quelli che notiamo maggiormente.
 
 
 ## Journal:
@@ -51,6 +53,7 @@ poteva fare di meglio allora ho cambiato gli obiettivi del progetto.
 
 * Gestite le collisioni con gli ostacoli e con i bonus (su y non serve)
 * Raggruppate in due funzioni le collisioni su X e su Z e commentato il relativo codice
+* Animare il personaggio con tasti freccia (bug da risolvere)
 
 *27 agosto*
 
@@ -58,10 +61,14 @@ poteva fare di meglio allora ho cambiato gli obiettivi del progetto.
 * Scritta game over e punetggio su schermo in caso di game over
 * Forma d'onda sulla sinistra della pista, la rappresentazione della sua trasformata sulla destra
 
-## Da fare:
+*28 agosto*
 
-* Animare il personaggio con tasti freccia (da sistemare)
-* Personaggio trapassato dalle linee quando ci passa sopra (trasparenza?)
+* Risolto bug sul movimento del personaggio
+* Risolto bug : personaggio trapassato dalle linee quando ci passa sopra (distrazione sui valori iniziali delle coordinate y del personaggio e degli ostacoli)
+* Refactoring del main (raggruppati alcuni for e if in due funzioni)
+* Modificata la posizione su z del personaggio
+
+## Da fare:
 
 ## Link utili:
 
@@ -73,3 +80,4 @@ poteva fare di meglio allora ho cambiato gli obiettivi del progetto.
 
 * Migliorare l'aspetto grafico del personaggio e degli ostacoli (sono tutti dei cubi)
 * Inserire animazioni/suoni all'impatto con i vari tipi di ostacolo
+* Inserire possibilità di saltare sopra gli ostacoli
