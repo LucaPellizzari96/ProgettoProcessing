@@ -18,7 +18,7 @@ void display(){
   fill(0, 0); // fill(rgb,alpha) : colore usato per riempire le prossime figure
     
   stroke(255); // stroke(color) : colore usato per i bordi delle figure (bianco)
-  strokeWeight(1 + (scoreGlobal/300)); // spessore del bordo
+  strokeWeight(1 + (scoreSum/300)); // spessore del bordo
   
   if(moveLeft) moveLeft();
   

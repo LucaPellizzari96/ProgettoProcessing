@@ -21,11 +21,11 @@ class Bonus {
   
   void display(){
     
-    color displayColor = color(scoreLow*0.67, scoreMid*0.67, scoreHi*0.67); // RGB
+    color displayColor = color(lowValue*0.67, midValue*0.67, highValue*0.67); // RGB
     fill(displayColor, 255); // fill(rgb,alpha) : colore usato per riempire le prossime figure
     
     stroke(255); // stroke(color) : colore usato per i bordi delle figure (bianco)
-    strokeWeight(1 + (scoreGlobal/300)); // spessore del bordo
+    strokeWeight(1 + (scoreSum/300)); // spessore del bordo
     
     // Creazione di una matrice di trasformazione per effettuare le rotazioni e gli ingrandimenti
     pushMatrix(); // salva il sistema di coordinate corrente sullo stack
@@ -40,8 +40,8 @@ class Bonus {
     
     popMatrix(); // ripristino il sistema di coordinate esistente prima del pushMatrix()
     
-    // Displacement su z, dipende da scoreGlobal (a sua volta dai toni + acuti della traccia)
-    z+= (1+(pow((scoreGlobal/150), 2)));
+    // Displacement su z, dipende da scoreSum (a sua volta dai toni + acuti della traccia)
+    z+= (1+(pow((scoreSum/150), 2)));
     
     // Rimpiazzo il cubo che non e' + visibile con un altro
     if (z >= maxZ) { // se la "camera" supera il cubo

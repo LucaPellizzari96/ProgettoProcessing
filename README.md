@@ -1,7 +1,25 @@
 ## Descrizione:
 
-Partendo dal video della canzone Five Hours di Deorro su YouTube, realizzato un minigioco simile a quella mostrato dal video della canzone (nome: AudioSurf).
-Ci sono tre corsie su cui il personaggio può transitare, si passa da una all'altra con i tasti direzionali (freccia destra e freccia sinistra): l'obiettivo del
+Il progetto si articola in due parti, entrambe basate su un evento comune in sottofondo: la riproduzione di una traccia audio in formato mp3 presa dalla cartella data, cartella
+che contiene, oltre a un paio di tracce un font che utilizzo per stampare su schermo i valori relativi ai filtri e il punteggio del minigioco.
+
+La prima parte mostra nella metà superiore della pagina la forma d'onda relativa al segnale audio in riproduzione, mentre nella metà inferiore lo spettro della trasformata del segnale.
+C'è la possibilità di applicare dei filtri al segnale (lowpass, highpass, bandpass) e in base al filtro scelto, nella parte alta dello schermo, ci sono alcune statistiche che ci 
+dicono qual'è il filtro attivo, qual'è la sua frequenza di taglio e nel caso di filtro passabanda qual'è la sua larghezza di banda; inoltre una semplice rappresentazione grafica ci mostra
+la zona dello spettro su cui il filtro agisce. Osservazione:
+
+* Filtro passabasso (lowpass): filtro che permette il passaggio di frequenze al di sotto di una certa soglia detta frequenza di taglio, bloccando le alte frequenze
+* Filtro passa alto (highpass): filtro che permette solo il passaggio di frequenze al di sopra di un certo valore detto frequenza di taglio
+* Filtro passabanda (bandpass): filtro che permette il passaggio di frequenze all'interno di un dato intervallo (la cosiddetta banda passante) ed attenua le frequenze al di fuori di esso
+
+Dopo aver capito qual'è l'effetto dell'applicazione di questi tre filtri sullo spettro di un segnale la comprensione della rappresentazione grafica è immediata:
+
+* Filtro passabasso: ho evidenziato la parte dello spettro con frequenza maggiore della frequenza di taglio (la parte che viene tagliata)
+* Filtro passa alto: ho evidenzaiato la parte dello spettro con frequenza minore della frequenza di taglio
+* Filtro passabanda: ho evidenziato la parte dello spettro con frequenza minore della frequenza di taglio e la parte dello spettro con frequenza maggiore della somma: frequenza di taglio + banda passante
+
+La seconda parte è un minigioco con alcune caratteristiche (velocità di avanzamento degli ostacoli, spessore dei bordi degli oggetti e delle linee che formano la pista, colore di sottofondo e punteggio) che
+dipendono dal valore dei toni bassi, medi e alti dello spettro della traccia audio in esecuzione. Ci sono tre corsie su cui il personaggio può transitare, si passa da una all'altra con i tasti direzionali (freccia destra e freccia sinistra): l'obiettivo del
 minigioco è quello di evitare gli ostacoli "cattivi" (cubi di colore girgio i cui bordi cambiano spessore dinamicamente in funzione delle caratteristiche spettrali della traccia in esecuzione
 durante la partita) e colpire gli ostacoli "buoni" (cubi il cui colore varia dinamicamente in base alle caratteristiche della traccia, anche per loro lo spessore dei bordi varia dinamicamente).
 Le corsie sono delimitate da quattro "linee", due di queste, quelle centrali, sono semplici linee costruite utilizzando la funzione "line(x,y,z,x2,y2,z2)" che riceve
@@ -16,10 +34,17 @@ di 10000 Hz. Il gioco termina quando si colpisce un ostacolo (cubo grigio) e il 
 punteggio calcolato in base alla "velocità" con cui i cubi avanzano durante la partita. Questa velocità è determinata principalmente dall'intensità dei toni alti nello spettro della canzone di sottofondo.
 Ho deciso di dare un minimo di importanza anche all'aspetto grafica 3D, ovvero ho cercato di fare in modo che ilsistema di gestione delle collisioni con i vari ostacoli fosse preciso. Il sistema è composto principalmente
 da due funzioni, una che calcola la collisione sull'asse delle x e l'altra che calcola la collisione sull'asse delle z. Gli oggetti della scena si muovono quasi tutti solo sull'asse z, mentre il cubo scelto come
-personaggio si muove anche su x per poter evitare gli ostacoli schivandoli lateralmente. La velocità con cui gli ostacoli avanzano durante la partita è determinata dal valore della variabile globale scoreGlobal
-che viene ricalcolata ad ogni frame in base ai valori delle tre zone dello spettro (bassi, medi, alti) secondo la formula scoreGlobal = 0.66*scoreLow + 0.8*scoreMid + 1*scoreHi; quindi come già detto prima diamo
-maggiore importanza ai toni alti che sono quelli che notiamo maggiormente.
+personaggio si muove anche su x per poter evitare gli ostacoli schivandoli lateralmente. La velocità con cui gli ostacoli avanzano durante la partita è determinata dal valore della variabile globale scoreSum
+che viene ricalcolata ad ogni frame in base ai valori delle tre zone dello spettro (bassi, medi, alti) secondo la formula scoreSum = 0.66*lowValue + 0.8*midValue + 1*HighValue; quindi come già detto prima diamo
+maggiore importanza ai toni alti. Volendo si può provare a modificare la formula nel modo seguente: scoreSum = 1*lowValue + 0.8*midValue + 0.66*HighValue, in questo modo assegnamo peso maggiore alle basse frequenze
+che sono quelle che notiamo maggiormente in quanto stimolano la coclea in regioni più ampie e distribuite spazialmente rispetto alle alte frequenze. 
+Le variabili lowValue, midValue e highValue corrispondono alla somma dei valori dello spettro compresi nei tre range di frequenze:
 
+* lowValue = 20-300 Hz
+* midValue = 300-2600 Hz
+* highValue = 2600-5500 Hz
+
+Per quanto riguarda la scelta di questi valori ho cercato informazioni su diversi siti Internet, ho fatto una media e ho eseguito una serie di test per vedere quali si adattavano meglio alle caratteristiche del minigioco.
 
 ## Journal:
 
@@ -65,19 +90,37 @@ poteva fare di meglio allora ho cambiato gli obiettivi del progetto.
 
 * Risolto bug sul movimento del personaggio
 * Risolto bug : personaggio trapassato dalle linee quando ci passa sopra (distrazione sui valori iniziali delle coordinate y del personaggio e degli ostacoli)
-* Refactoring del main (raggruppati alcuni for e if in due funzioni)
+* Refactoring del main (raggruppati alcuni for e if in semplici funzioni)
 * Modificata la posizione su z del personaggio
+* Aggiunte Stats sul lato sinistro dello schermo con lo stato dei filtri
 
-## Da fare:
+*31 agosto*
 
-## Link utili:
+* Implementata prima parte della scena
+* Possibilità di passare dalla prima parte alla seconda con la freccia in alto
+* Refactoring del main e aggiunti commenti
+* Feedback sui bonus presi: una scritta colorata con il punteggio che rimane attiva per qualche frame
+
+*2 settembre*
+
+* Risolto bug con il testo dopo il game over
+* Inserita possibilità di effettuare screenshot premendo 's' da tastiera
+
+## Fonti:
 
 1) documentazione minim http://code.compartmental.net/minim/javadoc/
 
 2) documentazione processing https://processing.org/reference/
 
+3) Wikipedia
+
+## Tool software utilizzati:
+
+Processing (versione 3.3.7)
+
 ## Futuri sviluppi
 
+* Inserire scena iniziale con spettro della fft, parte reale dello spettro e parte immaginaria dello spettro
 * Migliorare l'aspetto grafico del personaggio e degli ostacoli (sono tutti dei cubi)
 * Inserire animazioni/suoni all'impatto con i vari tipi di ostacolo
-* Inserire possibilità di saltare sopra gli ostacoli
+* Inserire possibilità di saltare sopra gli ostacoli (ad esempio con la freccia in alto)
