@@ -106,6 +106,11 @@ poteva fare di meglio allora ho cambiato gli obiettivi del progetto.
 * Risolto bug con il testo dopo il game over
 * Inserita possibilità di effettuare screenshot premendo 's' da tastiera
 
+## Screenshots
+
+ ![First scene](/screenshots/Screen-waveAndspectrum.png)
+ ![Minigame](/Screenshots/Screen-minigame.png)
+
 ## Fonti:
 
 1) documentazione minim http://code.compartmental.net/minim/javadoc/
