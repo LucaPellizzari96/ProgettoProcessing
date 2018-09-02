@@ -109,7 +109,7 @@ poteva fare di meglio allora ho cambiato gli obiettivi del progetto.
 ## Screenshots
 
  ![First scene](/screenshots/Screen-waveAndspectrum.png)
- ![Minigame](/Screenshots/Screen-minigame.png)
+ ![Minigame](/screenshots/Screen-minigame.png)
 
 ## Fonti:
 
