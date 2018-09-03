@@ -460,7 +460,7 @@ void updateFilter(){
     cutoffFrequency = map(mouseY, height, 0, 10000, 20);
     highPass.setFreq( cutoffFrequency);
   }else if(song.hasEffect(bandPass)){
-    cutoffFrequency = map(mouseY, height, 0, 10000, 300);
+    cutoffFrequency = map(mouseY, height, 0, 10000, 400);
     bandPass.setFreq( cutoffFrequency );
     bandWidthToPass = map(mouseX, 0, width, 400, 1500);
     bandPass.setBandWidth( bandWidthToPass );
