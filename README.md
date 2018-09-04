@@ -48,8 +48,8 @@ Per quanto riguarda la scelta di questi valori ho cercato informazioni su divers
 
 ## Screenshots
 
- ![First scene](/screenshots/Screen-waveAndspectrum.png)
- ![Minigame](/screenshots/Screen-minigame.png)
+ ![First scene](/screenshots/WaveAndspectrum.png)
+ ![Minigame](/screenshots/Minigame.png)
 
 ## Journal:
 

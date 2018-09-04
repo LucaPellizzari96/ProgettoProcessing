@@ -140,8 +140,8 @@ void playScene(){ // scena con forma d'onda in alto e spettro della trasformata 
   // Stats in alto
   fill(255); // colore del font -> bianco
   text(filter, width/100, height/20); // tipo di filtro: No filter, LowPass,...
-  if(cutoffFrequency > 0.0) text("Cutoff Frequency: " + str(int(cutoffFrequency)), width/6, height/20);
-  if(bandWidthToPass > 0.0) text("BandWidthToPass: " + str(int(bandWidthToPass)), width/1.75, height/20);
+  if(cutoffFrequency > 0.0) text("Cutoff Frequency: " + str(int(cutoffFrequency)) + " Hz", width/6, height/20);
+  if(bandWidthToPass > 0.0) text("BandWidth: " + str(int(bandWidthToPass)) + " Hz", width/1.55, height/20);
 
 } // playScene()
 
@@ -472,8 +472,8 @@ void printStats(){
     fill(255); // colore del font -> bianco
     textAlign(LEFT);
     text("Filter: " + filter, width/100, height/20); // tipo del filtro: LowPass, HighPass, BandPass
-    if(cutoffFrequency > 0.0) text("Cutoff Frequency: " + str(int(cutoffFrequency)), width/100, height/10); // valore della frequenza di taglio
-    if(bandWidthToPass > 0.0) text("BandWidthToPass: " + str(int(bandWidthToPass)), width/100, height/6.5); // valore della banda passante
+    if(cutoffFrequency > 0.0) text("Cutoff Frequency: " + str(int(cutoffFrequency)) + " Hz", width/100, height/10); // valore della frequenza di taglio
+    if(bandWidthToPass > 0.0) text("BandWidthToPass: " + str(int(bandWidthToPass)) + " Hz", width/100, height/6.5); // valore della banda passante
 } // printStats()
 
 void printPoints(){
