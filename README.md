@@ -29,7 +29,7 @@ valore restituito dalla funzione fft.getBand(i) che restituisce l'ampiezza (floa
 left e right in questo modo: float[] mix = song.mix.toArray(); e poi ad ogni punto che passo alla funzione line() assegno un valore di y che dipende dal valore i-esimo contenuto nel buffer mix moltiplicato per una
 costante per rendere la forma d'onda visibile sullo schermo. Ovviamente c'è la possibilità di applicare dei filtri al segnale da tastiera: con la lettera 'l' applichiamo un filtro passabasso, con 
 la 'b' un filtro passa banda, con la 'h' un filtro passa alto e con la 'n' ritorniamo alla situazione iniziale (nessun filtro). La frequenza di taglio dei filtri varia in base alla posizione su y del mouse 
-sullo schermo, in particolare se la coordinata y del mouse aumenta (quindi movimento verso il basso in base al sistema di riferimento in processing) anche la frequenza di taglio aumenta fino ad un valore massimo
+sullo schermo, in particolare se la coordinata y del mouse aumenta (quindi movimento verso il basso in base al sistema di riferimento in Processing) anche la frequenza di taglio aumenta fino ad un valore massimo
 di 10000 Hz. Il gioco termina quando si colpisce un ostacolo (cubo grigio) e il punteggio è determinato in base a quanti bonus (cubi di colore variabile) sono stati colpiti; per ogni cubo viene assegnato un
 punteggio calcolato in base alla "velocità" con cui i cubi avanzano durante la partita. Questa velocità è determinata principalmente dall'intensità dei toni alti nello spettro della canzone di sottofondo.
 Ho deciso di dare un minimo di importanza anche all'aspetto grafico, ovvero ho cercato di fare in modo che il sistema di gestione delle collisioni con i vari ostacoli fosse preciso. Il sistema è composto 
@@ -48,7 +48,7 @@ Per quanto riguarda la scelta di questi valori ho cercato informazioni su divers
 
 ## Screenshots
 
- ![First scene](/screenshots/WaveAndspectrum.png)
+ ![First scene](/screenshots/WaveAndSpectrum.png)
  ![Minigame](/screenshots/Minigame.png)
 
 ## Journal:
@@ -118,9 +118,9 @@ poteva fare di meglio allora ho cambiato gli obiettivi del progetto.
 
 ## Fonti:
 
-1) documentazione minim http://code.compartmental.net/minim/javadoc/
+1) documentazione Minim http://code.compartmental.net/minim/javadoc/
 
-2) documentazione processing https://processing.org/reference/
+2) documentazione Processing https://processing.org/reference/
 
 3) Wikipedia
 
