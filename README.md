@@ -1,22 +1,22 @@
 ## Descrizione:
 
 Il progetto si articola in due parti, entrambe basate su un evento comune in sottofondo: la riproduzione di una traccia audio in formato mp3 presa dalla cartella data, cartella
-che contiene, oltre a un paio di tracce un font che utilizzo per stampare su schermo i valori relativi ai filtri e il punteggio del minigioco.
+che contiene, oltre ad un paio di tracce, un font che utilizzo per stampare su schermo i valori relativi ai filtri e il punteggio del minigioco.
 
 La prima parte mostra nella metà superiore della pagina la forma d'onda relativa al segnale audio in riproduzione, mentre nella metà inferiore lo spettro della trasformata del segnale.
 C'è la possibilità di applicare dei filtri al segnale (lowpass, highpass, bandpass) e in base al filtro scelto, nella parte alta dello schermo, ci sono alcune statistiche che ci 
-dicono qual'è il filtro attivo, qual'è la sua frequenza di taglio e nel caso di filtro passabanda qual'è la sua larghezza di banda; inoltre una semplice rappresentazione grafica ci mostra
+dicono qual'è il filtro attivo, qual'è la sua frequenza di taglio e nel caso di filtro passabanda qual'è la sua banda passante; inoltre una semplice rappresentazione grafica ci mostra
 la zona dello spettro su cui il filtro agisce. Osservazione:
 
-* Filtro passabasso (lowpass): filtro che permette il passaggio di frequenze al di sotto di una certa soglia detta frequenza di taglio, bloccando le alte frequenze
-* Filtro passa alto (highpass): filtro che permette solo il passaggio di frequenze al di sopra di un certo valore detto frequenza di taglio
-* Filtro passabanda (bandpass): filtro che permette il passaggio di frequenze all'interno di un dato intervallo (la cosiddetta banda passante) ed attenua le frequenze al di fuori di esso
+* Filtro passabasso (lowpass): filtro che permette il passaggio di frequenze al di sotto di una certa soglia detta frequenza di taglio, bloccando le alte frequenze;
+* Filtro passa alto (highpass): filtro che permette solo il passaggio di frequenze al di sopra di un certo valore detto frequenza di taglio;
+* Filtro passabanda (bandpass): filtro che permette il passaggio di frequenze all'interno di un dato intervallo (la cosiddetta banda passante) ed attenua le frequenze al di fuori di esso.
 
 Dopo aver capito qual'è l'effetto dell'applicazione di questi tre filtri sullo spettro di un segnale la comprensione della rappresentazione grafica è immediata:
 
-* Filtro passabasso: ho evidenziato la parte dello spettro con frequenza maggiore della frequenza di taglio (la parte che viene tagliata)
-* Filtro passa alto: ho evidenzaiato la parte dello spettro con frequenza minore della frequenza di taglio
-* Filtro passabanda: ho evidenziato la parte dello spettro con frequenza minore della frequenza di taglio e la parte dello spettro con frequenza maggiore della somma: frequenza di taglio + banda passante
+* Filtro passabasso: ho evidenziato la parte dello spettro con frequenza maggiore della frequenza di taglio (la parte che viene tagliata);
+* Filtro passa alto: ho evidenziato la parte dello spettro con frequenza minore della frequenza di taglio;
+* Filtro passabanda: ho evidenziato la parte dello spettro con frequenza minore della frequenza di taglio e la parte dello spettro con frequenza maggiore della somma: frequenza di taglio + banda passante.
 
 La seconda parte è un minigioco con alcune caratteristiche (velocità di avanzamento degli ostacoli, spessore dei bordi degli oggetti e delle linee che formano la pista, colore di sottofondo e punteggio) che
 dipendono dal valore dei toni bassi, medi e alti dello spettro della traccia audio in esecuzione. Ci sono tre corsie su cui il personaggio può transitare, si passa da una all'altra con i tasti direzionali (freccia destra e freccia sinistra): l'obiettivo del
@@ -24,19 +24,19 @@ minigioco è quello di evitare gli ostacoli "cattivi" (cubi di colore girgio i c
 durante la partita) e colpire gli ostacoli "buoni" (cubi il cui colore varia dinamicamente in base alle caratteristiche della traccia, anche per loro lo spessore dei bordi varia dinamicamente).
 Le corsie sono delimitate da quattro "linee", due di queste, quelle centrali, sono semplici linee costruite utilizzando la funzione "line(x,y,z,x2,y2,z2)" che riceve
 come argomento le coordinate di due punti e costruisce una linea che unisce i due punti. Le due "linee" più esterne invece rappresentano una (quella di destra) lo spettro della 
-trasformata e l'altra (quella di sinistra) la forma d'onda del segnale. Anche queste due sono costruite sfruttando la funzione line() e variando le coordinate y dei due punti una in base al
+trasformata e l'altra (quella di sinistra) la forma d'onda del segnale. Anche queste due sono costruite sfruttando la funzione line() e variando le coordinate y dei due punti, una in base al
 valore restituito dalla funzione fft.getBand(i) che restituisce l'ampiezza (float) della banda di frequenza i-esima; per la forma d'onda invece prendo un AudioBuffer che contenga il mix dei canali
 left e right in questo modo: float[] mix = song.mix.toArray(); e poi ad ogni punto che passo alla funzione line() assegno un valore di y che dipende dal valore i-esimo contenuto nel buffer mix moltiplicato per una
 costante per rendere la forma d'onda visibile sullo schermo. Ovviamente c'è la possibilità di applicare dei filtri al segnale da tastiera: con la lettera 'l' applichiamo un filtro passabasso, con 
-la 'b' un filtro passabanda, con la 'h' un filtro passaalto e con la 'n' ritorniamo alla situazione iniziale (nessun filtro). La frequenza di taglio dei filtri varia in base alla posizione su y del mouse 
-sullo schermo, in particolare se la coordinata y del mouse aumenta (quindi movimento verso il basso in base al sitema di riferimento in processing) anche la frequenza di taglio aumenta fino ad un valore massimo
+la 'b' un filtro passa banda, con la 'h' un filtro passa alto e con la 'n' ritorniamo alla situazione iniziale (nessun filtro). La frequenza di taglio dei filtri varia in base alla posizione su y del mouse 
+sullo schermo, in particolare se la coordinata y del mouse aumenta (quindi movimento verso il basso in base al sistema di riferimento in processing) anche la frequenza di taglio aumenta fino ad un valore massimo
 di 10000 Hz. Il gioco termina quando si colpisce un ostacolo (cubo grigio) e il punteggio è determinato in base a quanti bonus (cubi di colore variabile) sono stati colpiti; per ogni cubo viene assegnato un
 punteggio calcolato in base alla "velocità" con cui i cubi avanzano durante la partita. Questa velocità è determinata principalmente dall'intensità dei toni alti nello spettro della canzone di sottofondo.
-Ho deciso di dare un minimo di importanza anche all'aspetto grafica 3D, ovvero ho cercato di fare in modo che ilsistema di gestione delle collisioni con i vari ostacoli fosse preciso. Il sistema è composto principalmente
+Ho deciso di dare un minimo di importanza anche all'aspetto grafico, ovvero ho cercato di fare in modo che il sistema di gestione delle collisioni con i vari ostacoli fosse preciso. Il sistema è composto 
 da due funzioni, una che calcola la collisione sull'asse delle x e l'altra che calcola la collisione sull'asse delle z. Gli oggetti della scena si muovono quasi tutti solo sull'asse z, mentre il cubo scelto come
 personaggio si muove anche su x per poter evitare gli ostacoli schivandoli lateralmente. La velocità con cui gli ostacoli avanzano durante la partita è determinata dal valore della variabile globale scoreSum
-che viene ricalcolata ad ogni frame in base ai valori delle tre zone dello spettro (bassi, medi, alti) secondo la formula scoreSum = 0.66*lowValue + 0.8*midValue + 1*HighValue; quindi come già detto prima diamo
-maggiore importanza ai toni alti. Volendo si può provare a modificare la formula nel modo seguente: scoreSum = 1*lowValue + 0.8*midValue + 0.66*HighValue, in questo modo assegnamo peso maggiore alle basse frequenze
+che viene ricalcolata ad ogni frame in base ai valori delle tre zone dello spettro (bassi, medi, alti) secondo la formula scoreSum = 0.66 x lowValue + 0.8 x midValue + 1 x HighValue; quindi come già detto prima diamo
+maggiore importanza ai toni alti. Volendo si può provare a modificare la formula nel modo seguente: scoreSum = 1 x lowValue + 0.8 x midValue + 0.66 x HighValue, in questo modo assegnamo peso maggiore alle basse frequenze
 che sono quelle che notiamo maggiormente in quanto stimolano la coclea in regioni più ampie e distribuite spazialmente rispetto alle alte frequenze. 
 Le variabili lowValue, midValue e highValue corrispondono alla somma dei valori dello spettro compresi nei tre range di frequenze:
 
@@ -45,6 +45,11 @@ Le variabili lowValue, midValue e highValue corrispondono alla somma dei valori 
 * highValue = 2600-5500 Hz
 
 Per quanto riguarda la scelta di questi valori ho cercato informazioni su diversi siti Internet, ho fatto una media e ho eseguito una serie di test per vedere quali si adattavano meglio alle caratteristiche del minigioco.
+
+## Screenshots
+
+ ![First scene](/screenshots/Screen-waveAndspectrum.png)
+ ![Minigame](/screenshots/Screen-minigame.png)
 
 ## Journal:
 
@@ -106,10 +111,10 @@ poteva fare di meglio allora ho cambiato gli obiettivi del progetto.
 * Risolto bug con il testo dopo il game over
 * Inserita possibilità di effettuare screenshot premendo 's' da tastiera
 
-## Screenshots
+*4 settembre*
 
- ![First scene](/screenshots/Screen-waveAndspectrum.png)
- ![Minigame](/screenshots/Screen-minigame.png)
+* Ultimi fix
+* Inserita unità di misura della frequenza nel testo che viene stampato a schermo
 
 ## Fonti:
 
