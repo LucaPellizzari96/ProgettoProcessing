@@ -116,6 +116,10 @@ poteva fare di meglio allora ho cambiato gli obiettivi del progetto.
 * Ultimi fix
 * Inserita unità di misura della frequenza nel testo che viene stampato a schermo
 
+*5 settembre*
+
+Semplificata la funzione draMidLines() rimuovendo il for => invece di disegnare tante piccole linee ognuna che congiunge due puntisulla stessa retta, ne disegno una sola che va dal punto iniziale al punto finale
+
 ## Fonti:
 
 1) documentazione Minim http://code.compartmental.net/minim/javadoc/

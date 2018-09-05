@@ -294,10 +294,8 @@ void drawSpectrum(){
 } // drawSpectrum()
 
 void drawMidLines(){
-  for(int i = 0; i < fft.specSize(); i++){
-    line(width*2/5, height, dist*i, width*2/5, height,dist*(i+1)); // linea fra la prima e la seconda corsia nel minigioco
-    line(width*3/5, height, dist*i, width*3/5, height,dist*(i+1)); // linea fra la seconda e la terza corsia nel minigioco
-  } // for
+    line(width*2/5, height, 0, width*2/5, height, dist*fft.specSize()); // linea fra la prima e la seconda corsia nel minigioco
+    line(width*3/5, height, 0, width*3/5, height, dist*fft.specSize()); // linea fra la seconda e la terza corsia nel minigioco
 } // drawMidLines()
 
 void detectCollisions(){
